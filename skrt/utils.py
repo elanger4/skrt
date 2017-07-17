@@ -115,3 +115,72 @@ def rmap(func, obj, typename):
     if isinstance(obj, Iterable):
         return type(obj)(rmap(func, item, typename) for item in obj)
     return obj
+
+def saveplot(obj, fname):
+    """
+    Save the current interactive plot.
+
+    Call signature:
+
+        saveplot(fname)
+
+    Arguements:
+        *obj*:
+            A matplotlib object that you which to be saved.
+        *fname*:
+            A string containing the path to where pickled object will be saved.
+
+    Output:
+        A pickle matplotlb object that can be later reloaded.
+
+    Usage:
+    >>> import matplotlib.pyplot as plt
+    >>> from mlib_plot import saveplot
+    >>> x = [1,2,3,4,5]   #Generate sample data
+    >>> y = [1,4,9,16,25]
+    >>> plot = plt.plot(x, y)
+    >>> savefig(plot, 'sample_plot') # This will save current plot to 'sample_plot.pkl'
+    """
+
+    if not fname.endswith('.pkl'):
+        fname += '.pkl'
+
+    with open(fname, 'wb') as f:
+        pickle.dump(obj, f)
+
+def loadplot(fname):
+    """
+    Load a previously saved interactive plot and display it.
+
+    Call signature:
+
+        loadplot(fname)
+
+    Arguements:
+        *fname*:
+            A string containing the path to where pickled object has been saved.
+
+    Output:
+        None.
+
+    Usage:
+    >>> from mlib_plot import loadplot
+    >>> loadplot('sample_plot.pkl') # File must already have been generated using 'saveplot'. '.pkl' extension must be included.
+
+    ^^^ The above code snipped will load and show the saved plot. ^^^
+
+
+    To have the command line tool, add the following to your ~/.bashrc
+
+        function showplot {
+            python /path/to/DOGO/loadplot.py $1
+        }
+
+    To display any plt from the commandline
+
+    """
+    new_plot = []
+    with open(fname, 'rb') as f:
+        new_plot = pickle.load(f)
+        matplotlib.pyplot.show()
+
